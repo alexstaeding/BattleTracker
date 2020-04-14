@@ -1,0 +1,84 @@
+allprojects {
+    group = "org.anvilpowered"
+    version = "1.0.0-SNAPSHOT"
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+}
+String _name = project.hasProperty("name") ? name : ""
+String _username = project.hasProperty("username") ? username : ""
+String _password = project.hasProperty("password") ? password : ""
+String _keyId = project.hasProperty("keyId") ? keyId : ""
+String _ringFile = project.hasProperty("ringFile") ? ringFile : ""
+subprojects {
+    apply plugin: 'java'
+    repositories {
+        mavenCentral()
+        maven { url 'https://repo.battleplugins.org/artifactory/libs-release-local'}
+        maven { url 'https://repo.battleplugins.org/artifactory/libs-snapshot-local'}
+        maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots'}
+        maven { url 'https://repo.nukkitx.com/maven-snapshots'}
+        maven { url 'https://repo.spongepowered.org/maven'}
+        maven { url 'http://repo.extendedclip.com/content/repositories/placeholderapi'}
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    }
+    dependencies {
+        implementation 'org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT'
+        implementation 'cn.nukkit:nukkit:1.0-SNAPSHOT'
+        implementation 'org.spongepowered:spongeapi:7.3.0-SNAPSHOT'
+        implementation 'mc.alk:BattleCore:2.4.0-SNAPSHOT'
+        implementation 'org.battleplugins:McAPI:3.0.0-SNAPSHOT'
+        implementation 'me.clip:placeholderapi:2.9.2'
+        implementation 'org.anvilpowered:anvil-api:1.0-SNAPSHOT'
+    }
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        archiveClassifier.set('sources')
+        from('src/main/java') {
+            include '**'
+        }
+    }
+}
+
+project(':api') {
+    afterEvaluate {
+        publishing {
+            repositories {
+                maven {
+                    credentials {
+                        username _username
+                        password _password
+                    }
+                    def releasesRepoUrl = "https://repo.battleplugins.org/artifactory/libs-release-local"
+                    def snapshotsRepoUrl = "https://repo.battleplugins.org/artifactory/libs-snapshot-local"
+                    url version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+                }
+            }
+            publications {
+                mavenJava(MavenPublication) {
+                    from components.java
+
+                    artifact sourcesJar
+
+                    pom {
+                        name = 'BattleTracker'
+                        description = 'An advanced pvp statistics tracker for Minecraft and BattleArena.'
+                        url = 'https://github.com/BattlePlugins/BattleTracker'
+
+                        scm {
+                            url = 'https://github.com/BattlePlugins/BattleTracker'
+                            connection = 'scm:git:https://github.com/BattlePlugins/BattleTracker.git'
+                            developerConnection = 'scm:git:https://github.com/BattlePlugins/BattleTracker.git'
+                        }
+
+                        developers {
+                            developer {
+                                id = _username
+                                name = _name
+                                organization = 'BattlePlugins'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

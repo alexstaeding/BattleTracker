@@ -4,7 +4,7 @@
 An advanced SQL-based tracker for Minecraftt and [BattleArena](https://github.com/BattlePlugins/BattleArena). 
 * [Bukkit](http://bukkit.org), [Sponge](https://www.spongepowered.org/) and [Nukkit](https://nukkitx.com/) support.
 * PvE and PvP tracking.
-* Overall stats, tallies, and individual records.
+* Overall stats, tallies, and individual members.
 * Win/loss tracking inside of BattleArena.
 * Premium-quality death messages and damage recounter.
 * Easy-to-understand API for developers.
